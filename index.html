@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IsoPark Atelier</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="game-shell">
+      <canvas id="game" width="1280" height="800" aria-label="互动式等距视角主题公园模拟游戏"></canvas>
+
+      <section class="topbar" aria-label="公园状态">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <div>
+            <strong>IsoPark Atelier</strong>
+            <small id="season-label">晨光入园</small>
+          </div>
+        </div>
+        <div class="stat"><span>资金</span><strong id="money">$0</strong></div>
+        <div class="stat"><span>游客</span><strong id="guests">0</strong></div>
+        <div class="stat"><span>快乐</span><strong id="happiness">0%</strong></div>
+        <div class="stat"><span>清洁</span><strong id="cleanliness">0%</strong></div>
+        <div class="stat"><span>星级</span><strong id="rating">1.0</strong></div>
+        <button id="save-toggle" class="icon-btn" type="button" title="存档管理" aria-label="存档管理">存</button>
+        <button id="pause" class="icon-btn" type="button" title="暂停/继续" aria-label="暂停/继续">Ⅱ</button>
+      </section>
+
+      <aside class="toolbox" aria-label="建造工具">
+        <div class="tool-group">
+          <button class="tool selected" data-tool="road" type="button" title="铺设道路">
+            <span class="tool-icon road"></span><span>道路</span><em>$10</em>
+          </button>
+          <button class="tool" data-tool="remove" type="button" title="移除地块">
+            <span class="tool-icon remove"></span><span>拆除</span><em>退款</em>
+          </button>
+          <button class="tool" data-tool="clean" type="button" title="清理垃圾">
+            <span class="tool-icon clean"></span><span>清洁</span><em>$4</em>
+          </button>
+        </div>
+        <div class="tool-group">
+          <button class="tool" data-tool="carousel" type="button" title="梦彩旋转木马">
+            <span class="tool-icon carousel"></span><span>木马</span><em>$140</em>
+          </button>
+          <button class="tool" data-tool="wheel" type="button" title="观景摩天轮">
+            <span class="tool-icon wheel"></span><span>摩天轮</span><em>$220</em>
+          </button>
+          <button class="tool" data-tool="coaster" type="button" title="小型过山车">
+            <span class="tool-icon coaster"></span><span>过山车</span><em>$260</em>
+          </button>
+          <button class="tool" data-tool="teacups" type="button" title="旋转茶杯">
+            <span class="tool-icon teacups"></span><span>茶杯</span><em>$120</em>
+          </button>
+          <button class="tool" data-tool="snack" type="button" title="小吃摊">
+            <span class="tool-icon snack"></span><span>小吃</span><em>$80</em>
+          </button>
+        </div>
+        <div class="tool-group">
+          <button class="tool" data-tool="tree" type="button" title="树木景观">
+            <span class="tool-icon tree"></span><span>树木</span><em>$18</em>
+          </button>
+          <button class="tool" data-tool="garden" type="button" title="花园装饰">
+            <span class="tool-icon garden"></span><span>花园</span><em>$28</em>
+          </button>
+          <button class="tool" data-tool="water" type="button" title="水体">
+            <span class="tool-icon water"></span><span>水体</span><em>$22</em>
+          </button>
+          <button class="tool" data-tool="fountain" type="button" title="喷泉">
+            <span class="tool-icon fountain"></span><span>喷泉</span><em>$65</em>
+          </button>
+        </div>
+      </aside>
+
+      <aside class="inspector" aria-label="公园发展面板">
+        <div class="panel-title">
+          <span id="selected-name">入园广场</span>
+          <button id="reset" class="ghost-btn" type="button">重开</button>
+        </div>
+        <div id="selected-details" class="details"></div>
+        <div class="meters">
+          <label>人气 <span id="appeal-value">0</span><meter id="appeal-meter" min="0" max="100" value="0"></meter></label>
+          <label>排队 <span id="queue-value">0</span><meter id="queue-meter" min="0" max="16" value="0"></meter></label>
+          <label>维护 <span id="status-value">0</span><meter id="status-meter" min="0" max="100" value="0"></meter></label>
+        </div>
+
+        <div class="management" aria-label="经营操作">
+          <div class="section-title">经营</div>
+          <div class="price-row">
+            <button id="ticket-down" class="ghost-btn" type="button">-</button>
+            <span>门票 <strong id="ticket-price">$6</strong></span>
+            <button id="ticket-up" class="ghost-btn" type="button">+</button>
+          </div>
+          <div class="action-grid">
+            <button id="hire-cleaner" class="action-btn" type="button">雇清洁员 <small id="cleaners-count">0</small></button>
+            <button id="hire-mechanic" class="action-btn" type="button">雇维修队 <small id="mechanics-count">0</small></button>
+            <button id="launch-ad" class="action-btn" type="button">营销巡游 <small id="marketing-time">0s</small></button>
+            <button id="claim-goal" class="action-btn" type="button">领取目标 <small id="goal-reward">$0</small></button>
+          </div>
+          <div id="goal-text" class="goal-text"></div>
+        </div>
+
+        <div class="mini-log" id="log" aria-live="polite"></div>
+      </aside>
+
+      <aside id="save-panel" class="save-panel" aria-label="存档管理" aria-hidden="true">
+        <div class="panel-title">
+          <span>存档管理</span>
+          <button id="save-close" class="ghost-btn" type="button">关闭</button>
+        </div>
+        <div class="save-actions">
+          <button class="save-btn" data-save-slot="0" type="button">保存 1</button>
+          <button class="save-btn" data-save-slot="1" type="button">保存 2</button>
+          <button class="save-btn" data-save-slot="2" type="button">保存 3</button>
+        </div>
+        <div id="save-slots" class="save-slots"></div>
+        <div class="save-note">存档保存在当前浏览器的 localStorage 中；每 45 秒会自动存入自动槽。</div>
+      </aside>
+
+      <div class="bottombar" aria-label="操作提示">
+        <span>左键建造/查看</span>
+        <span>拖拽或 WASD 移动</span>
+        <span>滚轮缩放</span>
+        <span>票价、员工和营销会改变游客流量与盈利</span>
+      </div>
+    </main>
+
+    <script src="game.js?v=2"></script>
+  </body>
+</html>
